@@ -1,0 +1,600 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameRoomWPF"
+        xmlns:GameRoomModel="clr-namespace:GameRoomModel;assembly=GameRoomModel" x:Class="GameRoomWPF.MainWindow"
+        mc:Ignorable="d"
+        Height="600" Width="920"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
+        MouseDown="Window_MouseDown" Loaded="Window_Loaded">
+    <Window.Resources>
+        <CollectionViewSource x:Key="customerViewSource" d:DesignSource="{d:DesignInstance {x:Type GameRoomModel:Customer}, CreateList=True}"/>
+        <CollectionViewSource x:Key="packageViewSource" d:DesignSource="{d:DesignInstance {x:Type GameRoomModel:Package}, CreateList=True}"/>
+        <CollectionViewSource x:Key="gameViewSource" d:DesignSource="{d:DesignInstance {x:Type GameRoomModel:Game}, CreateList=True}"/>
+        <CollectionViewSource x:Key="packageCustomerPackagesViewSource" Source="{Binding CustomerPackages, Source={StaticResource packageViewSource}}"/>
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                 Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Border Background="#30104b"
+            CornerRadius="10">
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="123"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="65"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Border Background="#24073c"
+                    
+            CornerRadius="15" Margin="30,19,30,24" Grid.Row="1" Grid.ColumnSpan="2">
+                <Border.Effect>
+                    <DropShadowEffect Color="#FF6D047E" Direction="50" ShadowDepth="3" BlurRadius="10" Opacity="0.5" />
+                </Border.Effect>
+            </Border>
+            <Image Margin="56,24,578,0" Source="logo.png" Stretch="Fill"/>
+
+            <TabControl x:Name="tbCtlGameRoom" HorizontalAlignment="Left" Height="447" Margin="56,38,0,0" VerticalAlignment="Top"  Grid.Row="1" Width="804" Grid.ColumnSpan="2">
+                <TabItem Header="Games">
+                    <TabItem.Background>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FFF0F0F0" Offset="0"/>
+                            <GradientStop Color="#FFEEEEEE" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TabItem.Background>
+                    <Grid Background="White" DataContext="{StaticResource gameViewSource}" Width="802">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0*"/>
+                            <ColumnDefinition Width="0*"/>
+                            <ColumnDefinition Width="60*"/>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition Width="11*"/>
+                            <ColumnDefinition Width="135*"/>
+                            <ColumnDefinition Width="590*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <DataGrid x:Name="gameDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="26,25,27,202" RowDetailsVisibilityMode="VisibleWhenSelected" Grid.Column="2" BorderBrush="White" FontFamily="Montserrat" BorderThickness="0,1,1,1"  Grid.ColumnSpan="5"  HorizontalGridLinesBrush="#FFE2E2E2" VerticalGridLinesBrush="#FFE2E2E2" RowHeaderWidth="0" HorizontalScrollBarVisibility="Disabled" >
+
+                            <DataGrid.Resources>
+
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                    
+                             Color="#EDECFE"/>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+
+                            </DataGrid.Resources>
+
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="FontWeight" Value="Medium" />
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="Padding" Value="5 5 5 5" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value="#de013f" />
+                                    <Setter Property="Foreground" Value="White" />
+
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="gameIdColumn" Binding="{Binding GameId}" Header="GameID" Width="70" >
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="nameColumn" Binding="{Binding Name}" Header="Name" Width="280">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="categoryColumn" Binding="{Binding Category}"  Header="Category" Width="140">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="typeColumn" Binding="{Binding Type}" Header="Type" Width="100">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTemplateColumn x:Name="release_DateColumn" Header="Release Date"  Width="110">
+
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+
+                                            <DatePicker SelectedDate="{Binding Release_Date, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" Background="White" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="6,0,-16,0" RenderTransformOrigin="0.5,0.5">
+                                                <DatePicker.RenderTransform>
+                                                    <TransformGroup>
+                                                        <ScaleTransform/>
+                                                        <SkewTransform AngleY="-0.332"/>
+                                                        <RotateTransform/>
+                                                        <TranslateTransform Y="-0.328"/>
+                                                    </TransformGroup>
+                                                </DatePicker.RenderTransform>
+                                                <DatePicker.BorderBrush>
+                                                    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                                        <GradientStop Color="White" Offset="0"/>
+                                                        <GradientStop Color="White" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </DatePicker.BorderBrush>
+                                            </DatePicker>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+
+                        </DataGrid>
+
+
+                        <Grid x:Name="grid3" HorizontalAlignment="Left" Margin="32,238,0,0" VerticalAlignment="Top" Grid.Column="2" Grid.ColumnSpan="5" Width="513">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0"/>
+                                <ColumnDefinition Width="71"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Category:" Grid.Column="3" HorizontalAlignment="Left" Margin="142,15,-67,10" VerticalAlignment="Center" FontFamily="Montserrat" Width="85"/>
+                            <TextBox x:Name="categoryTextBox" Grid.Column="3" HorizontalAlignment="Left" Height="24" Margin="232,16,-191,10" Text="{Binding Category, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" FontFamily="Montserrat" BorderBrush="#FF30104B" VerticalContentAlignment="Center"/>
+                            <Label Content="Game Id:" Grid.Column="1" HorizontalAlignment="Left" Margin="2,15,0,10" VerticalAlignment="Center" FontFamily="Montserrat" Width="82" Grid.ColumnSpan="2"/>
+                            <TextBox x:Name="gameIdTextBox" Grid.Column="3" HorizontalAlignment="Left" Height="24" Margin="0,16,0,10" Text="{Binding GameId, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF30104B" VerticalContentAlignment="Center"/>
+                            <Label Content="Name:" Grid.Column="1" HorizontalAlignment="Left" Margin="2,4,0,4" Grid.Row="2" VerticalAlignment="Center" FontFamily="Montserrat" Width="62"/>
+                            <TextBox x:Name="nameTextBox" Grid.Column="3" HorizontalAlignment="Left" Height="24" Margin="0,4,0,5" Grid.Row="2" Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF30104B" VerticalContentAlignment="Center"/>
+                            <Label Content="Release Date:" Grid.Column="3" HorizontalAlignment="Left" Margin="134,4,-80,4" Grid.Row="2" VerticalAlignment="Center" FontFamily="Montserrat" Width="108"/>
+                            <DatePicker x:Name="release_DateDatePicker" Grid.Column="3" HorizontalAlignment="Left" Margin="232,5,-189,4" Grid.Row="2" SelectedDate="{Binding Release_Date, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" VerticalContentAlignment="Center" Width="120">
+                                <DatePicker.BorderBrush>
+                                    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                        <GradientStop Color="#FF30104B"/>
+                                        <GradientStop Color="#FF30104B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </DatePicker.BorderBrush>
+                            </DatePicker>
+                            <Label Content="Type:" Grid.Column="1" HorizontalAlignment="Left" Margin="2,4,0,4" Grid.Row="4" VerticalAlignment="Center" FontFamily="Mont" Width="47"/>
+                            <TextBox x:Name="typeTextBox" Grid.Column="3" HorizontalAlignment="Left" Height="24" Margin="0,4" Grid.Row="4" Text="{Binding Type, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF30104B" VerticalContentAlignment="Center"/>
+                        </Grid>
+                        <Grid x:Name="grid4" HorizontalAlignment="Left" Margin="94,248,0,0" VerticalAlignment="Top" Grid.Column="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                        </Grid>
+                        <Image Grid.Column="6" Margin="382,229,16,-2" Source="img.png" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-25.508"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Customers">
+                    <Grid Background="White" DataContext="{StaticResource customerViewSource}">
+                        <DataGrid x:Name="customerDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="26,25,27,202" RowDetailsVisibilityMode="VisibleWhenSelected" Grid.Column="2" BorderBrush="White" FontFamily="Montserrat" BorderThickness="0,1,1,1"  Grid.ColumnSpan="5"  HorizontalGridLinesBrush="#FFE2E2E2" VerticalGridLinesBrush="#FFE2E2E2" RowHeaderWidth="0" HorizontalScrollBarVisibility="Disabled" >
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="FontWeight" Value="Medium" />
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="Padding" Value="5 5 5 5" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value="#de013f" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="customerIDColumn" Binding="{Binding CustomerID}" Header="Customer ID" Width="SizeToHeader">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="firstNameColumn" Binding="{Binding FirstName}" Header="First Name" Width="160">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="lastNameColumn" Binding="{Binding LastName}" Header="Last Name" Width="160">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="phoneColumn" Binding="{Binding Phone}" Header="Phone" Width="150">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTemplateColumn x:Name="registered_DateColumn" Header="Registered Date" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <DatePicker SelectedDate="{Binding Registered_Date, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" Width="150" BorderBrush="{x:Null}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Grid x:Name="grid1" HorizontalAlignment="Left" Margin="525,236,0,0" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0"/>
+                                <ColumnDefinition Width="103"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                        </Grid>
+                        <Grid x:Name="grid5" HorizontalAlignment="Left" Margin="42,241,0,0" VerticalAlignment="Top" Height="111" Width="492">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="33"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Customer ID:" Grid.Column="0" HorizontalAlignment="Left" Margin="3,3,0,3" Grid.Row="0" VerticalAlignment="Center" Grid.ColumnSpan="2" FontFamily="Montserrat"/>
+                            <TextBox x:Name="customerIDTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="3,4,0,4" Grid.Row="0" Text="{Binding CustomerID, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderBrush="#FF24073C"/>
+                            <Label Content="First Name:" Grid.Column="0" HorizontalAlignment="Left" Margin="3,3,0,3" Grid.Row="1" VerticalAlignment="Center" Grid.ColumnSpan="2" FontFamily="Montserrat"/>
+                            <TextBox x:Name="firstNameTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="3,4,0,4" Grid.Row="1" Text="{Binding FirstName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderBrush="#FF24073C"/>
+                            <Label Content="Last Name:" Grid.Column="2" HorizontalAlignment="Left" Margin="142,4,-86,3" Grid.Row="1" VerticalAlignment="Center" FontFamily="Montserrat" FontSize="11"/>
+                            <TextBox x:Name="lastNameTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="247,6,-242,3" Grid.Row="1" Text="{Binding LastName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderBrush="#FF24073C" />
+                            <Label Content="Phone:" Grid.Column="0" HorizontalAlignment="Left" Margin="3,3,0,3" Grid.Row="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontFamily="Montserrat"/>
+                            <TextBox x:Name="phoneTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="3,4,0,4" Grid.Row="3" Text="{Binding Phone, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderBrush="#FF24073C"/>
+                            <Label Content="Registered Date:" Grid.Column="2" HorizontalAlignment="Left" Margin="142,4,-115,3" VerticalAlignment="Center" FontFamily="Montserrat" FontSize="11"/>
+                            <DatePicker x:Name="registered_DateDatePicker" Grid.Column="2" HorizontalAlignment="Left" Margin="247,4,-233,6" SelectedDate="{Binding Registered_Date, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderBrush="#FF24073C" Width="120"/>
+                        </Grid>
+                        <Image Margin="605,220,-2,4" Source="img2.png" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-20.145"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Packages">
+                    <Grid Background="White"  DataContext="{StaticResource packageViewSource}" Width="816">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="67*"/>
+                            <ColumnDefinition Width="23*"/>
+                            <ColumnDefinition Width="120*"/>
+                            <ColumnDefinition Width="606*"/>
+                        </Grid.ColumnDefinitions>
+                        <DataGrid x:Name="packageDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="14,23,36,194" RowDetailsVisibilityMode="VisibleWhenSelected" BorderBrush="White" FontFamily="Montserrat" BorderThickness="0,1,1,1"  Grid.ColumnSpan="4"  HorizontalGridLinesBrush="#FFE2E2E2" VerticalGridLinesBrush="#FFE2E2E2" RowHeaderWidth="0" HorizontalScrollBarVisibility="Disabled" >
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="FontWeight" Value="Medium" />
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="Padding" Value="5 5 5 5" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value="#de013f" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform AngleX="0.556"/>
+                                    <RotateTransform/>
+                                    <TranslateTransform X="1.022"/>
+                                </TransformGroup>
+                            </DataGrid.RenderTransform>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="packageIDColumn" Binding="{Binding PackageID}" Header="Package ID" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="packageTypeColumn" Binding="{Binding PackageType}" Header="Package Type" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="dailyTimeColumn" Binding="{Binding DailyTime}" Header="Daily Time" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="full_NightColumn" Binding="{Binding Full_Night}" Header="Full Night" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="numberOfControllersColumn" Binding="{Binding NumberOfControllers}" Header="Controllers" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="priceColumn" Binding="{Binding Price}" Header="Price" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Grid x:Name="grid2" HorizontalAlignment="Left" Margin="39,249,0,-19" VerticalAlignment="Top" Height="189" Width="597" Grid.ColumnSpan="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="105.667"/>
+                                <ColumnDefinition Width="34.333"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Daily Time:" Grid.Column="2" HorizontalAlignment="Left" Margin="144,0,-88,6" Grid.Row="2" VerticalAlignment="Center" FontFamily="Montserrat"/>
+                            <TextBox x:Name="dailyTimeTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="305,2,-282,8" Grid.Row="2" Text="{Binding DailyTime, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF24073C" VerticalContentAlignment="Center" FontFamily="Montserrat"/>
+                            <Label Content="Full Night:" Grid.Column="2" HorizontalAlignment="Left" Margin="144,3,-83,4" Grid.Row="3" VerticalAlignment="Center" FontFamily="Montserrat"/>
+                            <TextBox x:Name="full_NightTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="305,4,-282,7" Grid.Row="3" Text="{Binding Full_Night, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF24073C" VerticalContentAlignment="Center" FontFamily="Montserrat"/>
+                            <Label Content="Number Of Controllers:" Grid.Column="2" HorizontalAlignment="Left" Margin="144,2,-151,5" Grid.Row="4" VerticalAlignment="Center" FontFamily="Montserrat"/>
+                            <TextBox x:Name="numberOfControllersTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="305,5,-282,6" Grid.Row="4" Text="{Binding NumberOfControllers, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF24073C" VerticalContentAlignment="Center" FontFamily="Montserrat"/>
+                            <Label Content="Package ID:" Grid.Column="0" HorizontalAlignment="Left" Margin="10,2,0,5" Grid.Row="2" VerticalAlignment="Center" FontFamily="Montserrat"/>
+                            <TextBox x:Name="packageIDTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="3,3,0,6" Grid.Row="2" Text="{Binding PackageID, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF24073C" VerticalContentAlignment="Center" FontFamily="Montserrat"/>
+                            <Label Content="Package Type:" Grid.Column="0" HorizontalAlignment="Left" Margin="11,3,0,6" Grid.Row="4" VerticalAlignment="Center" FontFamily="Montserrat"/>
+                            <TextBox x:Name="packageTypeTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="3,4,0,4" Grid.Row="4" Text="{Binding PackageType, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF24073C" VerticalContentAlignment="Center" FontFamily="Montserrat"/>
+                            <Label Content="Price:" Grid.Column="0" HorizontalAlignment="Left" Margin="10,4,0,5" Grid.Row="3" VerticalAlignment="Center" FontFamily="Montserrat"/>
+                            <TextBox x:Name="priceTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="24" Margin="3,4,0,6" Grid.Row="3" Text="{Binding Price, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120" BorderBrush="#FF24073C" VerticalContentAlignment="Center" FontFamily="Montserrat"/>
+                        </Grid>
+                        <Image Grid.Column="3" Margin="420,250,29,13" Source="img3.png" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-25.086"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Purchases">
+                    <Grid Background="White" DataContext="{StaticResource packageCustomerPackagesViewSource}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45*"/>
+                            <ColumnDefinition Width="221*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="cbPackage" HorizontalAlignment="Left" Margin="19,329,0,0" VerticalAlignment="Top" Width="120" SelectedValue="{Binding
+                ElementName=customerPackagesDataGrid,Path=SelectedItem.PackageID,Mode=OneWay}" Grid.Column="1">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} - {1}">
+                                                <Binding Path="PackageType"/>
+                                                <Binding Path="DailyTime"/>
+                                                <Binding Path="Price"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+
+                        </ComboBox>
+                        <Label Content="Select a Customer" HorizontalAlignment="Left" Margin="163,329,0,0" VerticalAlignment="Top" Width="129" FontFamily="Montserrat" Grid.Column="1"/>
+                        <Label Content="Select a Package" HorizontalAlignment="Left" Margin="22,326,0,0" VerticalAlignment="Top" Width="113" FontFamily="Montserrat"/>
+                        <DataGrid x:Name="customerPackagesDataGrid" AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding}" Margin="15,17,26,164" RowDetailsVisibilityMode="VisibleWhenSelected" Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="True" BorderBrush="White" FontFamily="Montserrat" BorderThickness="0,1,1,1"   HorizontalGridLinesBrush="#FFE2E2E2" VerticalGridLinesBrush="#FFE2E2E2" RowHeaderWidth="0" HorizontalScrollBarVisibility="Disabled">
+                            <DataGrid.Resources>
+
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                    
+                             Color="#EDECFE"/>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+
+                            </DataGrid.Resources>
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="FontWeight" Value="Medium" />
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="Padding" Value="5 5 5 5" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value="#de013f" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn x:Name="customerPackageIDColumn" Binding="{Binding CustomerPackageID}" Header="CustomerPackageID" Width="160">
+
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="customerPackageFirstNameColumn" Binding="{Binding FirstName}" Header="FirstName" Width="120">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="customerPackageLastNameColumn" Binding="{Binding LastName}" Header="LastName" Width="130">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="customerPackagePackageIDColumn" Binding="{Binding PackageID}" Header="PackageID" Width="100">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="customerPackagePackageTypeColumn" Binding="{Binding PackageType}" Header="Type" Width="130">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="customerPackagePackageDailyTime" Binding="{Binding DailyTime}" Header="DailyTime" Width="120">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <ComboBox x:Name="cbCustomer" HorizontalAlignment="Left" Margin="305,329,0,0" VerticalAlignment="Top" Width="120" Grid.Column="1" SelectedValue="{Binding
+                        ElementName=customerPackagesDataGrid,Path=SelectedItem.CustomerID,Mode=OneWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} {1}">
+                                                <Binding Path="FirstName"/>
+                                                <Binding Path="LastName"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Image Grid.Column="1" Margin="484,275,49,14" Source="img4.png" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-28.967"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                        </Image>
+                        <Label Content="Add a purchase for a customer or simply edit a customer's package" HorizontalAlignment="Left" Margin="22,287,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" FontFamily="Montserrat" Width="546"/>
+
+                    </Grid>
+                </TabItem>
+            </TabControl>
+            <GroupBox x:Name="gbOperations" Header="" HorizontalAlignment="Left" Height="56.833" Margin="71,416.757,0,0" Grid.Row="1" VerticalAlignment="Top" Width="317.5" UseLayoutRounding="False" BorderBrush="{x:Null}" >
+                <Grid HorizontalAlignment="Left" Height="264" VerticalAlignment="Top" Width="408" Margin="10,0,-112,-208">
+                    <Button Content="ADD" Height="20" Width="80" Margin="0,4,318,240" x:Name="btnAdd" Click="btnAdd_Click" Background="#FF30104B" FontFamily="Montserrat SemiBold" Foreground="White" VerticalAlignment="Center" BorderBrush="#FF4C2A68" HorizontalAlignment="Right"/>
+                    <Button Content="EDIT" Height="20" Width="80" Margin="104,4,224,240" x:Name="btnEdit" Click="btnEditO_Click" FontFamily="Montserrat SemiBold" VerticalAlignment="Center" Foreground="White" Background="#FFDE013F" BorderBrush="#FFE08080"/>
+                    <Button Content="DELETE" Height="20" Width="80" Margin="199,4,129,240" x:Name="btnDelete" Click="btnDeleteO_Click" Background="#FF30104B" FontFamily="Montserrat SemiBold" Foreground="White" VerticalAlignment="Center" BorderBrush="#FF4C2A68"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox x:Name="gbActions" Header="" HorizontalAlignment="Left" Height="57" Margin="372,417,0,0" Grid.Row="1" VerticalAlignment="Top" Width="285" BorderBrush="White">
+                <Grid HorizontalAlignment="Left" Height="140" Margin="10,0,0,-37" VerticalAlignment="Top" Width="267">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="17*"/>
+                        <ColumnDefinition Width="107*"/>
+                        <ColumnDefinition Width="49*"/>
+                        <ColumnDefinition Width="94*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="44*"/>
+                        <RowDefinition Height="29*"/>
+                        <RowDefinition Height="67*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="SAVE" Height="20" Width="80" Margin="0,4,44,20" x:Name="btnSave" Click="btnSave_Click" FontFamily="Montserrat SemiBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="#FFD68282" Background="#FFDE013F" Grid.ColumnSpan="2"/>
+                    <Button Content="CANCEL" Height="20" Width="80" Margin="91,4,79,20" x:Name="btnCancel" Click="btnCancel_Click" FontFamily="Montserrat SemiBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="#FF24073C" Background="#FF30104B" Grid.ColumnSpan="3" Grid.Column="1"/>
+                </Grid>
+            </GroupBox>
+
+        </Grid>
+    </Border>
+
+</Window>
